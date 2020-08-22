@@ -19,8 +19,13 @@ void setup()
   tras_direita.setSpeed(255); 
 
 }
- 
-void loop()
+void loop (){ 
+  testa_motores();}
+
+
+
+
+void testa_motores()
 {
  testa_motor(frente_direita);
  delay(1000);
@@ -31,7 +36,6 @@ void loop()
  testa_motor(frente_esquerda);
  delay(1000);
 }
-
 void testa_motor(AF_DCMotor motor){
   motor.run(FORWARD); 
   delay(2000);
