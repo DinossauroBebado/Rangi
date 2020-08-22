@@ -23,8 +23,6 @@ void loop (){
   testa_motores();}
 
 
-
-
 void testa_motores()
 {
  testa_motor(frente_direita);
