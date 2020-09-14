@@ -103,15 +103,18 @@ void loop (){
          Serial.println("Triangulo:Emoção 1");
         
     if( ps2x.Button(PSB_R2)) // Acelera
-    {   testa_motores();
+    {   frente_direita.run(FORWARD);
         Serial.print("Stick Values:");
         Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
         Serial.print(",");
         Serial.println(ps2x.Analog(PSS_LX), DEC);   
-    }   
+    } else {
+        frente_direita.run(RELEASE); 
+    }
+ 
  }
  delay(50);    
-
+  
   }
 void frente(AF_DCMotor motor1,AF_DCMotor motor2,AF_DCMotor motor3,AF_DCMotor motor4,int velocidade){
   //todos os motores frente_ Isso podia estar melhor mais foda-se
