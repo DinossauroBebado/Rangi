@@ -3,7 +3,7 @@
 //------------Sumario------------
 //testa_motores( );
 //testa_motor(motor);
-//frente(motor,motor,motor,motor,velocidade);
+//frente(motor,motor,velocidade);
 
 
  
@@ -20,10 +20,11 @@
 //Cria a classe do PS2 
   PS2X ps2x;
 //variaveis para o controle de ps2 
-int error = 0;
-byte type = 0;
-byte vibrate = 0;
- 
+  int error = 0;
+  byte type = 0;
+  byte vibrate = 0;
+//outras
+  int velocidade_y = 0; //Conversão do analogico esquerdo para a velocidade do motor 
  
 void setup()
 {
@@ -103,31 +104,58 @@ void loop (){
          Serial.println("Triangulo:Emoção 1");
         
     if( ps2x.Button(PSB_R2)) // Acelera
-    {   frente_direita.run(FORWARD);
+    {   velocidade_y = ps2x.Analog(PSS_LY);
+        frente(tras_direita,tras_esquerda,velocidade_y);
         Serial.print("Stick Values:");
-        Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
+        Serial.print(ps2x.Analog(PSS_LY)); //Left stick, Y axis. Other options: LX, RY, RX  
         Serial.print(",");
-        Serial.println(ps2x.Analog(PSS_LX), DEC);   
+        Serial.println(ps2x.Analog(PSS_LX));   
     } else {
-        frente_direita.run(RELEASE); 
+        tras_direita.run(RELEASE); 
+        tras_esquerda.run(RELEASE);
     }
  
  }
  delay(50);    
   
   }
-void frente(AF_DCMotor motor1,AF_DCMotor motor2,AF_DCMotor motor3,AF_DCMotor motor4,int velocidade){
+void frente(AF_DCMotor motor1,AF_DCMotor motor2,int velocidade)
+  {
   //todos os motores frente_ Isso podia estar melhor mais foda-se
+          Serial.println("------------------");
+          Serial.print("Velocidade:");
+          Serial.println(velocidade);// quando vc acelera no controle vai pra 0 e quando vc da re vai para 255
+          //Então a funçaõ map inverte isso para quando acelerar ir para 127, velocidade max do motor, e quando da re ir para -128
+          velocidade = map(velocidade,0, 255,127,-127); 
+          Serial.print("Velocidade pos map:");
           Serial.println(velocidade);
-          motor1.setSpeed(velocidade); 
-          motor2.setSpeed(velocidade); 
-          motor3.setSpeed(velocidade); 
-          motor4.setSpeed(velocidade); 
-          motor1.run(FORWARD);
-          motor2.run(FORWARD);
-          motor3.run(FORWARD);
-          motor4.run(FORWARD);
-  }
+          if (velocidade > 12)// se o analogico estiver para frente 
+              {
+               Serial.println("------------------");
+               Serial.print("Velocidade frente:");
+               Serial.println(velocidade*2); 
+               motor1.setSpeed(velocidade*2); //multiplica por dois para alcançar a velo max do motor 2*127 = 254
+               motor2.setSpeed(velocidade*2); 
+               motor1.run(FORWARD);
+               motor2.run(FORWARD);
+              }
+           else if (velocidade < -12)//analogico para tras 
+              { 
+                Serial.println("------------------");
+                Serial.print("Velocidade tras:");
+                Serial.println(velocidade*(-2));
+                delay(100);//para a inercia do motor nao danificar o arduino 
+                motor1.setSpeed(velocidade*(-2)); //multiplica por menos dois para alcançar a velo max do motor -2*-127 = 254
+                motor2.setSpeed(velocidade*(-2)); 
+                motor1.run(BACKWARD);
+                motor2.run(BACKWARD);
+              }
+           else // analogico parado 
+              {
+               motor1.run(RELEASE);
+               motor2.run(RELEASE);
+              }
+   }
 void testa_motores()
 {//testa todos os motores 
          testa_motor(frente_direita);
