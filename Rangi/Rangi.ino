@@ -106,6 +106,7 @@ void loop (){
     if( ps2x.Button(PSB_R2)) // Acelera
     {   velocidade_y = ps2x.Analog(PSS_LY);
         frente(tras_direita,tras_esquerda,velocidade_y);
+        frente(frente_direita,frente_esquerda,velocidade_y);
         Serial.print("Stick Values:");
         Serial.print(ps2x.Analog(PSS_LY)); //Left stick, Y axis. Other options: LX, RY, RX  
         Serial.print(",");
@@ -113,6 +114,8 @@ void loop (){
     } else {
         tras_direita.run(RELEASE); 
         tras_esquerda.run(RELEASE);
+        frente_direita.run(RELEASE); 
+        frente_esquerda.run(RELEASE);
     }
  
  }
