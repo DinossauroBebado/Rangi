@@ -11,6 +11,7 @@ Adafruit_SSD1306 display(4);
 
 int raio_olho = 10;
 
+
 void setup()
 {
   pinMode(pinVRx, INPUT);
@@ -37,10 +38,18 @@ if (statusSW) {
    Serial.println("  Botao: [Solto] "); 
 } else {
    piscada();
+   delay(1000);
+   asterisco();
+   delay(1000);
+   hashtag();
+   delay(1000);
+   ponto();
+   delay(1000);
+   
 }
 
 if (X != X_antes || Y != Y_antes)
-{     Serial.println(dog);
+{     Serial.println(".");
       while(X != X_antes && Y != Y_antes)
       {                
             if (max(X,X_antes)==X)
@@ -119,8 +128,41 @@ void piscada( ){
    display.setTextSize(6);
    display.setCursor(40,7);
    display.println("^");
+   display.display();
+   delay(200);
+   display.clearDisplay();}
+
+void asterisco( ){
+   display.clearDisplay();
+   Serial.println("  Botao: [Apertado] ");
+   display.setTextColor(WHITE);
+   display.setTextSize(4);
+   display.setCursor(40,0);
+   display.println("*");
+   display.display();
    delay(200);
    display.clearDisplay();
-  
+}
+void hashtag( ){
+   display.clearDisplay();
+   Serial.println("  Botao: [Apertado] ");
+   display.setTextColor(WHITE);
+   display.setTextSize(4);
+   display.setCursor(40,0);
+   display.println("#");
+   display.display();
+   delay(200);
+   display.clearDisplay();
+}
+void ponto( ){
+   display.clearDisplay();
+   Serial.println("  Botao: [Apertado] ");
+   display.setTextColor(WHITE);
+   display.setTextSize(5);
+   display.setCursor(60,0);
+   display.println(".");
+   display.display();
+   delay(200);
+   display.clearDisplay();
   
   }
