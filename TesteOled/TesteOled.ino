@@ -1,48 +1,126 @@
-#include <Arduino.h>
-#include <Wire.h>
-#include <MicroLCD.h>
+#include <Adafruit_SSD1306.h>
 
-LCD_SSD1306 lcd; /* para módulo contralado pelo CI SSD1306 OLED */
+
+Adafruit_SSD1306 display(4);
+ 
 
 
 #define pinVRx A2
 #define pinVRy A1
 #define pinSW  2
 
+int raio_olho = 10;
+
 void setup()
 {
   pinMode(pinVRx, INPUT);
   pinMode(pinVRy, INPUT);
   pinMode(pinSW,  INPUT_PULLUP);
-    Serial.begin(9600);
-      lcd.begin();
-  
+  Serial.begin(9600);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.display();
+  display.fillCircle(60, 15,raio_olho, WHITE);
+  display.display();
+  display.clearDisplay();
   }
 
 void loop( ) {
- int valorVRx = analogRead(pinVRx);
- int valorVRy = analogRead(pinVRy);
- bool statusSW = digitalRead(pinSW);
 
- Serial.print("Valor VRx: ");
- Serial.print(map(valorVRx,0,1023,0,63)); 
+bool statusSW = digitalRead(pinSW);
+int X = map(analogRead(pinVRx),0,1023,(raio_olho),(display.width()- raio_olho));
+int Y = map(analogRead(pinVRy),0,1023,(raio_olho),(display.height()- raio_olho));
+int X_antes = 60 ; 
+int Y_antes = 16 ; 
+
+if (statusSW) {
+   Serial.println("  Botao: [Solto] "); 
+} else {
+   piscada();
+}
+
+if (X != X_antes || Y != Y_antes)
+{     Serial.println(dog);
+      while(X != X_antes && Y != Y_antes)
+      {                
+            if (max(X,X_antes)==X)
+            {
+                  if(max(Y,Y_antes)==Y)
+                  {     X_antes=X;
+                        Y_antes =Y;
+                        Y--;
+                        X=X-10;
+                        display.fillCircle(X, Y, raio_olho, WHITE);
+                        display.display();
+                        Serial.print("Valor VRx: ");
+                        Serial.print(Y); 
+                        Serial.print("Valor VRy: ");
+                        Serial.println(X);  
+                        display.clearDisplay();
+                  }     
+                   else
+                   {  X_antes=X;
+                      Y_antes =Y;
+                      Y++;
+                      X=X-10;
+                      display.fillCircle(X, Y, raio_olho, WHITE);
+                      display.display();
+                      Serial.print("Valor VRx: ");
+                      Serial.print(Y); 
+                      Serial.print("Valor VRy: ");
+                      Serial.println(X);  
+                      display.clearDisplay();
+                  }
+             }
+      
+            else{
+                 if(max(Y,Y_antes)==Y)
+                  {   X_antes=X;
+                      Y_antes =Y;
+                      Y--;
+                      X=X+10;
+                      display.fillCircle(X, Y, raio_olho, WHITE);
+                      display.display();
+                      Serial.print("Valor VRx: ");
+                      Serial.print(Y); 
+                      Serial.print("Valor VRy: ");
+                      Serial.println(X);  
+                      display.clearDisplay();
+                  }
+                  else
+                  {   X_antes=X;
+                      Y_antes =Y;
+                      Y++;
+                      X=X+10;
+                      display.fillCircle(X, Y, raio_olho, WHITE);
+                      display.display();
+                      Serial.print("Valor VRx: ");
+                      Serial.print(Y); 
+                      Serial.print("Valor VRy: ");
+                      Serial.println(X);  
+                      display.clearDisplay();                  
+                  }
+      }                 X = map(analogRead(pinVRx),0,1023,(raio_olho),(display.width()- raio_olho));
+                        Y = map(analogRead(pinVRy),0,1023,(raio_olho),(display.height()- raio_olho));  }
+}
+else {
+    display.fillCircle(X_antes, Y_antes,raio_olho, WHITE);
+    display.display();
+   
+}
+// display.drawCircle(centerX, centerY, radius, color).
+  }
+
+
+void piscada( ){
+   display.clearDisplay();
+   Serial.println("  Botao: [Apertado] ");
+   display.setTextColor(WHITE);
+   display.setTextSize(6);
+   display.setCursor(40,7);
+   display.println("^");
+   delay(200);
+   display.clearDisplay();
   
- Serial.print("  Valor VRy: ");
- Serial.print(map(valorVRy,0,1023,0,127));  
-
- if (statusSW) {
-     Serial.println("  Botao: [Solto] "); 
- } else {
-     Serial.println("  Botao: [Apertado] ");
- }  
-int X = map(valorVRx,0,1023,0,63);
-int Y = map(valorVRy,0,1023,0,127);
-  lcd.clear();
-  lcd.setFontSize(FONT_SIZE_MEDIUM);
-  lcd.setCursor(X,Y);
-  lcd.println("Bartolomeu");
-  lcd.println();
-  delay(1000);
-
   
   }
