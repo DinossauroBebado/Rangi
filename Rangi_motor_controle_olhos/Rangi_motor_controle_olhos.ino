@@ -24,20 +24,16 @@ Adafruit_SSD1306 display(4);
   byte type = 0;
   byte vibrate = 0;
 //outras
-  int velocidade_y = 0; //Conversão do analogico esquerdo para a velocidade do motor 
- 
+  int tolerancia = 30;  
+  int motor_y ; 
+  int motor_x ; 
+//void texto(char palavra_cima, char palavra_baixo)
 void setup()
 {//------------------
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.clearDisplay();
-  display.display();
-  display.clearDisplay();
-
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println("Dinossauro Bebado");
-  display.display();
-  delay(2000);
+   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+   display.clearDisplay();
+   texto("Dinossauro","Bebado");
+   
   // Define a velocidade maxima para os motores 
   frente_esquerda.setSpeed(255); 
   frente_direita.setSpeed(255); 
@@ -51,27 +47,34 @@ void setup()
   //Testa por erros na conexão ps2<--> Adaptador
          if(error == 0){
          Serial.println("Found Controller, configured successful");
+         texto("Controle","Achado");
        }
         
-        else if(error == 1)
+        else if(error == 1){
          Serial.println("No controller found, check wiring, see readme.txt to enable debug.");
-         
-        else if(error == 2)
+         texto("Conecte","Controle");
+        }
+        else if(error == 2){
          Serial.println("Controller found but not accepting commands. see readme.txt to enable debug.");
-         
-        else if(error == 3)
+         texto("Controle","Bugado");
+        }
+        else if(error == 3){
          Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
          type = ps2x.readType(); 
-           switch(type) {
+        }
+         switch(type) {
              case 0:
               Serial.println("Unknown Controller type");
+              texto("Controle","Desconhecido");
              break;
              case 1:
               Serial.println("DualShock Controller Found");
+              texto("Dualshock","Conectado");
              break;
              case 2:
               Serial.println("GuitarHero Controller Found");
-             break;
+              texto("Erro","01");
+              break;
      }
 
 //-------------------------------------------
@@ -104,59 +107,72 @@ void loop (){
     if(ps2x.Button(PSB_SELECT))
         // protocolo de teste 
          Serial.println("Protocolo de Testes");
-    if(ps2x.Button(PSB_RED))            
+    if(ps2x.Button(PSB_RED)) {           
          Serial.println("Circulo:Emoção 2");
-         display.clearDisplay();
-         display.setCursor(0,0);
-         display.println("Dinossauro Bebado 1");
-         display.display();
-  
-    if(ps2x.Button(PSB_PINK))            
+         emocao('.',60,0,5);
+    }
+    if(ps2x.Button(PSB_PINK)){            
          Serial.println("Quadrado:Emoção 4");
-         display.clearDisplay();
-         display.setCursor(0,0);
-         display.println("Dinossauro Bebado 4");
-         display.display();     
-    
-    if(ps2x.Button(PSB_BLUE))            
+         emocao('^',40,7,6);
+    }
+    if(ps2x.Button(PSB_BLUE))  {          
          Serial.println("XIS :Emoção 3"); 
-         display.clearDisplay();
-         display.setCursor(0,0);
-         display.println("Dinossauro Bebado 3 ");
-         display.display();
-            
-    if(ps2x.Button(PSB_GREEN))
+         emocao('*',40,0,4);
+    }       
+    if(ps2x.Button(PSB_GREEN)){
          Serial.println("Triangulo:Emoção 1");
-         display.clearDisplay();
-         display.setCursor(0,0);
-         display.println("Dinossauro Bebado 1 ");
-         display.display();
-        
+          emocao('#',40,0,4);
+    }    
     if( ps2x.Button(PSB_R2)) // Acelera
-    {   velocidade_y = ps2x.Analog(PSS_LY);
-        frente(tras_direita,tras_esquerda,velocidade_y);
-        frente(frente_direita,frente_esquerda,velocidade_y);
+    {   motor_y = ps2x.Analog(PSS_LY);
+        //frente(tras_direita,tras_esquerda,velocidade_y);
+        //frente(frente_direita,frente_esquerda,velocidade_y);
         Serial.print("Stick Values:");
-        display.setCursor(0,0);
-        display.print("Stick Values:");
         Serial.print(ps2x.Analog(PSS_LY)); //Left stick, Y axis. Other options: LX, RY, RX
-        display.print(ps2x.Analog(PSS_LY));  
         Serial.print(",");
-        display.print(",");
-        Serial.println(ps2x.Analog(PSS_LX));  
-        display.println(ps2x.Analog(PSS_LX));
-        display.display(); 
-    } else {
+        Serial.println(ps2x.Analog(PSS_LX)); 
+        delay(250);
+        
+        else {
        tras_direita.run(RELEASE); 
        tras_esquerda.run(RELEASE);
        frente_direita.run(RELEASE); 
        frente_esquerda.run(RELEASE);
+       display.clearDisplay();
     }
  }
  delay(50);    
-  
+ display.clearDisplay();
   }
-void frente(AF_DCMotor motor1,AF_DCMotor motor2,int velocidade)
+//----------------------Funções de controle dos olhos---------------------------------
+void emocao(char expressao,int olho_x,int olho_y,int tamanho ){
+   //função que cria as emoções recebe o caracter que vai ser usado e a posição no espaço alem do tamanho 
+   Serial.println(expressao);
+   display.clearDisplay();
+   display.setTextColor(WHITE);
+   display.setTextSize(tamanho);
+   display.setCursor(olho_x,olho_y);
+   display.println(expressao);
+   display.display();
+   delay(200);
+   display.clearDisplay();
+   }
+void texto(char palavra_cima, char palavra_baixo){
+   display.clearDisplay();
+   display.setTextColor(WHITE);
+   display.setTextSize(2);
+   display.setCursor(0,0);
+   display.println(palavra_cima);
+   display.println(palavra_baixo);
+   display.display();
+   delay(500);
+   display.clearDisplay();
+ }
+
+
+
+  
+/*void frente(AF_DCMotor motor1,AF_DCMotor motor2,int velocidade)
   {
   //todos os motores frente_ Isso podia estar melhor mais foda-se
           Serial.println("------------------");
@@ -193,6 +209,34 @@ void frente(AF_DCMotor motor1,AF_DCMotor motor2,int velocidade)
                motor2.run(RELEASE);
               }
    }
+*/
+void direita(){
+  frente_esquerda.run(FORWARD); ; 
+  frente_direita.run(BACKWARD);
+  tras_direita.run(BACKWARD); 
+  tras_esquerda.run(FORWARD); 
+}
+void esquerda(){
+  frente_esquerda.run(BACKWARD); ; 
+  frente_direita.run(FORWARD);
+  tras_direita.run(FORWARD); 
+  tras_esquerda.run(BACKWARD); 
+}
+void tras(){
+  frente_esquerda.run(BACKWARD); ; 
+  frente_direita.run(BACKWARD);
+  tras_direita.run(BACKWARD); 
+  tras_esquerda.run(BACKWARD); 
+  
+  }
+void frente(){
+    frente_esquerda.run(FORWARD); ; 
+    frente_direita.run(FORWARD);
+    tras_direita.run(FORWARD); 
+    tras_esquerda.run(FORWARD); 
+  
+}
+
 void testa_motores()
 {//testa todos os motores 
          testa_motor(frente_direita);
