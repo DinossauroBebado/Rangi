@@ -5,10 +5,10 @@ void setup()
    texto("Dinossauro","Bebado");
    
   // Define a velocidade maxima para os motores 
-  frente_esquerda.setSpeed(255); 
-  frente_direita.setSpeed(255); 
-  tras_esquerda.setSpeed(255); 
-  tras_direita.setSpeed(255); 
+  frente_esquerda.setSpeed(max_speed); 
+  frente_direita.setSpeed(max_speed); 
+  tras_esquerda.setSpeed(max_speed); 
+  tras_direita.setSpeed(max_speed); 
   //Setup Controle de Ps2 
   Serial.begin(57600);
   //setup pins and settings:  GamePad(clock, command, attention, 
@@ -30,8 +30,9 @@ void setup()
         }
         else if(error == 3){
          Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
-         type = ps2x.readType(); 
         }
+        type = ps2x.readType(); 
+        
          switch(type) {
              case 0:
               Serial.println("Unknown Controller type");
@@ -48,5 +49,5 @@ void setup()
      }
 
 //-------------------------------------------
- 
+              
 }

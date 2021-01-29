@@ -22,3 +22,13 @@ void texto(const char* palavra_cima, const char* palavra_baixo){
    delay(500);
    display.clearDisplay();
  }
+void olho(int X,int Y){
+      // coloca o circulo no espaço recebendo as cordenadas 
+      display.clearDisplay();
+      display.fillCircle(X, Y, raio_olho, WHITE);
+      display.display();
+      Serial.print(Y); 
+      Serial.print(":");
+      Serial.println(X);  
+      display.clearDisplay();
+  }

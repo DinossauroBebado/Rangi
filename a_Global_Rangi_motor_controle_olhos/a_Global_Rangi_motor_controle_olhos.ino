@@ -3,7 +3,11 @@
 //-----Titulo: Rangi + motor + controle + olhos                                                                        ---------
 //-----Autor:@dinossauro.bebado/@DinossauroBbad1                                     ---------
 //-----Objetivo :  adicionar as telas de oled ao robo                                                                   ---------
-//-----Data : 23/01/21                                                                       ---------
+/*-----Data : 23/01/21 -
+//            24/01/21 - 
+              26/01/21 - 
+              28/01/21 
+*/
 //--------------------------------------------------------------------------------------------
 // carrega a biblioteca do Shield
 #include <AFMotor.h>
@@ -24,14 +28,13 @@ Adafruit_SSD1306 display(4);
   int error = 0;
   byte type = 0;
   byte vibrate = 0;
-//outras
+//variaveis motor 
+  int max_speed = 255 ; 
   int tolerancia = 30;  
   int motor_y ; 
   int motor_x ;
-//declara as funções 
-/*void texto(const char*,const char*);
-
-void emocao(char ,int ,int ,int  );
-
-void testa_motores();
-void testa_motor(AF_DCMotor );*/
+//variaveis olhos 
+  int raio_olho = 7 ; 
+  int olho_y ;
+  int olho_x ; 
+  
