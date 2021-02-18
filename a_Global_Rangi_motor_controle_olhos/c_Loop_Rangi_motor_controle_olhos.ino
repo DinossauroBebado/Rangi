@@ -9,12 +9,12 @@ void loop (){
    */
  display.clearDisplay(); 
  if(error == 1){ //skip loop if no controller found
-  texto("Erro","00");
+  texto("Erro","00",500);
   return; }
   
  if(type == 2){ //Guitar Hero Controller
    Serial.println("Error 1 ");
-   texto("Erro","01");
+   texto("Erro","01",500);
  }
 
  else { //DualShock Controller
@@ -24,9 +24,21 @@ void loop (){
     if(ps2x.Button(PSB_START))              
         //Start Rangi 
          Serial.println("Start Rangi");
-    if(ps2x.Button(PSB_SELECT))
+    if(ps2x.Button(PSB_SELECT)){
         // protocolo de teste 
          Serial.println("Protocolo de Testes");
+         texto("Protocolo","de Teste",1000);
+         texto("Eleve o ","Rangi",1000);
+         texto_central("5","",1000);
+         texto_central("4","",1000);
+         texto_central("3","",1000);
+         texto_central("2","",1000);
+         texto_central("1","",1000);
+         texto("Testando","",1000);
+         testa_motores();
+         texto("Teste","Completo",1000);
+         
+    }
     if(ps2x.Button(PSB_RED)) {           
          Serial.println("Circulo:Emoção 2");
          emocao('.',60,0,5);
@@ -37,11 +49,11 @@ void loop (){
     }
     if(ps2x.Button(PSB_BLUE))  {          
          Serial.println("XIS :Emoção 3"); 
-         emocao('*',40,0,4);
+         sleepy();
     }       
     if(ps2x.Button(PSB_GREEN)){
          Serial.println("Triangulo:Emoção 1");
-          emocao('#',40,0,4);
+          happy();
     }    
     if( ps2x.Button(PSB_R2)) //Controle dos motores 
     {   //Mapeia o analogico de 0-255 para um plano cartesiano em que um o analogico parado fica no 0,0 

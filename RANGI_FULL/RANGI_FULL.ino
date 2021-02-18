@@ -1,50 +1,24 @@
-//--------------------------------------------------------------------------------------------
-//-----Projeto: 31:01                                                                          ---------
-//-----Titulo: Rangi + motor + controle + olhos                                                                        ---------
-//-----Autor:@dinossauro.bebado/@DinossauroBbad1                                     ---------
-//-----Objetivo :  adicionar as telas de oled ao robo                                                                   ---------
-/*-----Data : 23/01/21 -
-//            24/01/21 - 
-              26/01/21 - 
-              28/01/21 -
-              17/02/21 -
-              18/02/21
-*/
-//--------------------------------------------------------------------------------------------
-// carrega a biblioteca do Shield
-#include <AFMotor.h>
-//carrega a biblioteca do Controle de PS2 
-#include <PS2X_lib.h>
-//carrega a biblioteca dos oleds
-
-
 #include <Adafruit_SSD1306.h>
-//inicia o objeto do display 
-
-Adafruit_SSD1306 display(128,32,&Wire,-1);
-// Define o motor e  a posição dos motores 
-  AF_DCMotor frente_esquerda(4); 
+#include <PS2X_lib.h>
+#include <AFMotor.h>
+ AF_DCMotor frente_esquerda(4); 
   AF_DCMotor frente_direita(1);
   AF_DCMotor tras_direita(2); 
   AF_DCMotor tras_esquerda(3); 
-//Cria a classe do PS2 
-  PS2X ps2x;
-//variaveis para o controle de ps2 
-  int error = 0;
-  byte type = 0;
-  byte vibrate = 0;
-//variaveis motor 
+PS2X ps2x;
   int max_speed = 255 ; 
   int tolerancia = 30;  
   int motor_y ; 
   int motor_x ;
-//variaveis olhos 
-  int raio_olho = 7 ; 
+
+   int raio_olho = 7 ; 
   int olho_y ;
   int olho_x ; 
 
-//variavel de imagem 
-// 'DinossauroBebadologoBWlsmall', 103x64px
+  int error = 0;
+  byte type = 0;
+  byte vibrate = 0;
+Adafruit_SSD1306 display(128,64,&Wire, -1);
 const unsigned char DinossauroBebadoLogo [] PROGMEM = {
   0xf0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x80, 0x07, 0xff, 
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x80, 0x00, 0x7f, 0xff, 0xff, 0xfe, 
@@ -98,24 +72,143 @@ const unsigned char DinossauroBebadoLogo [] PROGMEM = {
   0xff, 0xf0, 0x00, 0x07, 0xff, 0xff, 0xfc, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x80, 
   0xff, 0xff, 0xff, 0xff, 0x80, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
   0xff, 0xf8, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe
-  };
-void testa_motores(){
-   testa_motor(frente_direita);
-  delay(500);
-   testa_motor(tras_direita);
-  delay(500);
-   testa_motor(tras_esquerda);
-  delay(500);
-   testa_motor(frente_esquerda);
-  delay(500);
-  }
+};
+void setup(){
+display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+display.clearDisplay();
+logo();
+display.invertDisplay(0);
+delay(1000);
+display.clearDisplay();
+texto("Rangi","por :",1000);
+texto("Dinossauro","Bebado",1000);
 
-void testa_motor(AF_DCMotor motor){
-  motor.run(FORWARD);
-  delay(500);
-  motor.run(BACKWARD);
-  delay(500);
-  motor.run(RELEASE); 
+frente_esquerda.setSpeed(max_speed); 
+  frente_direita.setSpeed(max_speed); 
+  tras_esquerda.setSpeed(max_speed); 
+  tras_direita.setSpeed(max_speed); 
+  //error = ps2x.config_gamepad(13,9,10,2, false, false);  
+  //Testa por erros na conexão ps2<--> Adaptador
+        if(error == 0){
+         Serial.println("Found Controller, configured successful");
+         texto("Controle","Achado",500);
+       }
+        
+        else if(error == 1){
+         Serial.println("No controller found, check wiring, see readme.txt to enable debug.");
+         texto("Conecte","Controle",500);
+        }
+        else if(error == 2){
+         Serial.println("Controller found but not accepting commands. see readme.txt to enable debug.");
+         texto("Controle","Bugado",500);
+        }
+        else if(error == 3){
+         Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
+        }
+        type = ps2x.readType(); 
+        
+         switch(type) {
+             case 0:
+              Serial.println("Unknown Controller type");
+              texto("Controle","Desconhecido",500);
+             break;
+             case 1:
+              Serial.println("DualShock Controller Found");
+              texto("Dualshock","Conectado",500);
+             break;
+             case 2:
+              Serial.println("GuitarHero Controller Found");
+              texto("Erro","01",500);
+              break;
+     }
+
 }
 
+void loop() {}
+
+void texto(const char* palavra_cima, const char* palavra_baixo, int tempo){
+   display.clearDisplay();
+   display.setTextColor(WHITE);
+   display.setTextSize(2);
+   display.setCursor(0,0);
+   display.println(palavra_cima);
+   display.println(palavra_baixo);
+   display.display();
+   delay(tempo);
+   display.clearDisplay();
+ }
+ void logo(){
+   display.drawBitmap(10, 0,  DinossauroBebadoLogo, 103, 64, WHITE);
+   display.fillRect(0, 0, 10, 64, WHITE);
+   display.fillRect(113, 0, 20, 64, WHITE);
+   display.invertDisplay(1);
+   display.display();
+   delay(5000);}
+
+void direita(){
+  frente_esquerda.run(FORWARD); ; 
+  frente_direita.run(BACKWARD);
+  tras_direita.run(BACKWARD); 
+  tras_esquerda.run(FORWARD); 
+  display.fillCircle(0, display.height()/2, raio_olho, WHITE);
+  display.display();
+}
+void esquerda(){
+  frente_esquerda.run(BACKWARD);
+  frente_direita.run(FORWARD);
+  tras_direita.run(FORWARD); 
+  tras_esquerda.run(BACKWARD); 
+ display.fillCircle(128, display.height()/2, raio_olho, WHITE);
+  display.display();
+}
+void tras(){
+  frente_esquerda.run(BACKWARD); 
+  frente_direita.run(BACKWARD);
+  tras_direita.run(BACKWARD); 
+  tras_esquerda.run(BACKWARD); 
   
+  }
+void frente(){
+    frente_esquerda.run(FORWARD); 
+    frente_direita.run(FORWARD);
+    tras_direita.run(FORWARD); 
+    tras_esquerda.run(FORWARD); 
+  
+}
+
+
+void texto_central(const char* palavra_cima, const char* palavra_baixo, int tempo){
+   display.clearDisplay();
+   display.setTextColor(WHITE);
+   display.setTextSize(2);
+   display.setCursor(display.width()/2,display.height()/2);
+   display.println(palavra_cima);
+   display.println(palavra_baixo);        
+   display.display();
+   delay(tempo);
+   display.clearDisplay();
+ } 
+
+ void olho(int X,int Y){
+      // coloca o circulo no espaço recebendo as cordenadas 
+      display.clearDisplay();
+      display.fillCircle(X, Y, raio_olho, WHITE);
+      display.display();
+      Serial.print(Y); 
+      Serial.print(":");
+      Serial.println(X);  
+      display.clearDisplay();
+  }
+
+void emocao(char expressao,int olho_x,int olho_y,int tamanho ){
+   //função que cria as emoções recebe o caracter que vai ser usado e a posição no espaço alem do tamanho 
+   Serial.println(expressao);
+   display.clearDisplay();
+   display.setTextColor(WHITE);
+   display.setTextSize(tamanho);
+   display.setCursor(olho_x,olho_y);
+   display.println(expressao);
+   display.display();
+   delay(200);
+   display.clearDisplay();
+   }
