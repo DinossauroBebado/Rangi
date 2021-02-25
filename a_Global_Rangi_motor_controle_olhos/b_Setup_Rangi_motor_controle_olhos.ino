@@ -2,7 +2,7 @@ void setup()
 {//------------------
    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
    display.clearDisplay();
-   /*logo();
+   logo();
    display.invertDisplay(0);
    delay(1000);
    display.clearDisplay();
@@ -11,7 +11,7 @@ void setup()
    texto("Dinossauro","Bebado",1000);
    display.clearDisplay();
    loading();
-   texto("Sistema","Iniciado",1000);*/
+   texto("Sistema","Iniciado",1000);
    display.clearDisplay();
   // Define a velocidade maxima para os motores 
   frente_esquerda.setSpeed(max_speed); 

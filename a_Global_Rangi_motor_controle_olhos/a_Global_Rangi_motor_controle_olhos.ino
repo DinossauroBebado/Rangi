@@ -33,6 +33,7 @@ Adafruit_SSD1306 display(128,32,&Wire,-1);
   int error = 0;
   byte type = 0;
   byte vibrate = 0;
+  bool START = false;
 //variaveis motor 
   int max_speed = 255 ; 
   int tolerancia = 30;  
@@ -42,6 +43,7 @@ Adafruit_SSD1306 display(128,32,&Wire,-1);
   int raio_olho = 7 ; 
   int olho_y ;
   int olho_x ; 
+  int tempo_emocao = 1000;
 
 //variavel de imagem 
 // 'DinossauroBebadologoBWlsmall', 103x64px

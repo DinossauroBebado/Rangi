@@ -16,13 +16,37 @@ void happy(){
   display.fillCircle(64,16, raio_olho, WHITE);
   display.fillCircle(64,20, raio_olho, BLACK);
   display.display();
-  delay(800);}
+  delay(tempo_emocao);}
 void sleepy(){
   display.fillCircle(64,16, raio_olho, WHITE);
   display.fillRect(50,-25, 40,40, BLACK);
   display.display();
-  delay(800);
+  delay(tempo_emocao);
 }
+void love(){
+  display.fillCircle(70,16,7, WHITE);
+  display.fillCircle(58,16,7, WHITE);
+  display.fillTriangle(10, 0, 0, 32, 80, 25, BLACK);
+  display.fillTriangle(118, 0, 48, 25, 128, 32, BLACK);
+  display.display();
+  delay(tempo_emocao);
+  display.clearDisplay();
+  }
+void mad () {
+  //so olho esquerdo 
+  display.fillCircle(64,16,raio_olho, WHITE);
+  display.fillTriangle(53, 9, 67, 9, 53, 20, BLACK);
+  display.display();
+  delay(tempo_emocao);
+  display.clearDisplay();
+  } 
+  void pisca(){
+     display.fillCircle(64,16,7, WHITE);
+     for(int i=0;i<=14;i++){
+     display.fillCircle(64,i,7,BLACK);
+     display.display();}
+     delay(tempo_emocao);
+     display.clearDisplay();}
 void texto(const char* palavra_cima, const char* palavra_baixo, int tempo){
    display.clearDisplay();
    display.setTextColor(WHITE);

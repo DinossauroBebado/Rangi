@@ -21,9 +21,13 @@ void loop (){
   
     ps2x.read_gamepad(false,vibrate);          //read controller and set large motor to spin at 'vibrate' speed,was (false,vibrate) nao entendi oq faz exatamente
     
-    if(ps2x.Button(PSB_START))              
+    if(ps2x.Button(PSB_START)) {             
         //Start Rangi 
          Serial.println("Start Rangi");
+         START = true ; 
+    }
+    while(START){
+    ps2x.read_gamepad(false,vibrate);
     if(ps2x.Button(PSB_SELECT)){
         // protocolo de teste 
          Serial.println("Protocolo de Testes");
@@ -41,11 +45,11 @@ void loop (){
     }
     if(ps2x.Button(PSB_RED)) {           
          Serial.println("Circulo:Emoção 2");
-         emocao('.',60,0,5);
+         love();
     }
     if(ps2x.Button(PSB_PINK)){            
          Serial.println("Quadrado:Emoção 4");
-         emocao('^',40,7,6);
+         mad ();
     }
     if(ps2x.Button(PSB_BLUE))  {          
          Serial.println("XIS :Emoção 3"); 
@@ -54,7 +58,19 @@ void loop (){
     if(ps2x.Button(PSB_GREEN)){
          Serial.println("Triangulo:Emoção 1");
           happy();
-    }    
+    }  
+    if(ps2x.Button(PSB_R1))
+    {
+      Serial.println("R1: Pisca direita"); 
+      pisca(); 
+      
+      } 
+     if(ps2x.Button(PSB_L1))
+    {
+      Serial.println("L1: Pisca esquerda"); 
+      pisca(); 
+      
+      }
     if( ps2x.Button(PSB_R2)) //Controle dos motores 
     {   //Mapeia o analogico de 0-255 para um plano cartesiano em que um o analogico parado fica no 0,0 
         motor_y = map(ps2x.Analog(PSS_LY),0, 255,127,-127); 
@@ -101,5 +117,15 @@ void loop (){
       }
    
  }
+   display.setTextColor(WHITE);
+   display.setTextSize(2);
+   display.setCursor(0,0);
+   display.println("PRESS");
+   display.println("START");
+   
+   display.fillTriangle(80, 10, 80, 26, 120, 18, WHITE);
+   display.display();
+  
+  
  delay(50);    
-  }
+ }}
